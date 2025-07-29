@@ -4,6 +4,7 @@ import com.example.blog_application.user.dto.UserRequestDto
 import com.example.blog_application.user.dto.UserResponseDto
 import com.example.blog_application.user.dto.UserUpdateDto
 import com.example.blog_application.user.enums.UserRoleEnum
+import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 
@@ -58,8 +59,6 @@ class UserService(private val userRepository: UserRepository, private val passwo
         )
     }
 
-    // In UserService.kt
-
     fun updateUser(id: String, userUpdateDto: UserUpdateDto): UserResponseDto? {
         val existingUser = userRepository.findById(id).orElse(null) ?: return null
 
@@ -82,5 +81,13 @@ class UserService(private val userRepository: UserRepository, private val passwo
             lastName = savedUser.lastName,
             roles = savedUser.roles
         )
+    }
+
+    fun deleteUser(id: String) {
+        // First, check if the user exists
+        if (!userRepository.existsById(id)) {
+            throw UsernameNotFoundException("User with id $id not found")
+        }
+        userRepository.deleteById(id)
     }
 }

@@ -67,7 +67,7 @@ class UserController(
         return userService.findAllUsers()
     }
 
-    @PutMapping("/user/{id}")
+    @PutMapping("/user/updateuser/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
     fun updateUser(
         @PathVariable id: String,
@@ -79,5 +79,12 @@ class UserController(
         } else {
             ResponseEntity.notFound().build()
         }
+    }
+
+    @DeleteMapping("/user/deleteuser/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    fun deleteUser(@PathVariable id: String): ResponseEntity<Void> {
+        userService.deleteUser(id)
+        return ResponseEntity.noContent().build() // Returns a 204 No Content response
     }
 }
