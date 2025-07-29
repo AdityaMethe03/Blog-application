@@ -1,0 +1,60 @@
+# Auth
+
+## Technology and libraries:
+- Kotlin
+- Java 21 (openjdk)
+- Spring Boot 3.2.6 (Reactive / WebFlux)
+- Spring Actuator
+- MongoDB (Reactive)
+- Redis (Redisson)
+- Kafka
+- FreeMarker (email template)
+- AOP
+- Open API (Swagger)
+- Gson
+- JSON Web Token
+- NextCloud (Document management)
+- Notifications - Email, Mobile, SMS
+- CQRS pattern - https://blog.gyri.tech/cqrs-pattern-in-microservices/
+
+## Dev setup
+- Create copy of `application-notification.properties` from `src/main/resources/application-notification.properties.example`
+    - Enable notification events as required
+- Create copy of `application.properties` from `src/main/resources/application.properties.example`
+- Changes in `src/main/resources/application.properties`:
+    - *server.port*
+    - *spring.application.name*
+    - *server.servlet.context-path*
+    - *management.server.base-path*
+    - *spring.webflux.base-path*
+    - *app.spring.security.salt-key*
+    - *app.spring.security.jwt-secret-key*
+    - *app.spring.security.jwt-token-expiration-time*
+    - *app.portal.url*
+    - *logging.file.name*
+    - *app.swagger.server.urls*
+    - *spring.data.redis.host* (check port & password)
+    - *app.redis.topic.prefix*
+    - *spring.data.mongodb.host*
+    - *spring.data.mongodb.database*
+    - *spring.data.mongodb.username*
+    - *spring.data.mongodb.password*
+    - *spring.data.mongodb.authentication-database*
+    - *spring.kafka.bootstrap-servers*
+    - *spring.kafka.security.protocol* (if required)
+    - *spring.kafka.properties.sasl.mechanism* (if required)
+    - *spring.kafka.properties.sasl.jaas.config* (if required)
+    - *spring.kafka.consumer.group-id*
+    - *app.kafka.topic.prefix*
+    - *app.notification.emailConfig.url*
+    - *app.notification.emailConfig.accountToken*
+    - *app.document.cloudUser*
+    - *app.document.cloudBaseUrl*
+    - *app.document.cloudAuth*
+    - *app.document.userEntities* (if required)
+    - *management.zipkin.tracing.endpoint*
+    - *spring.config.import*
+    - *spring.cloud.consul.enabled*
+    - *spring.cloud.consul.host*
+    - *spring.cloud.consul.port*
+    - *spring.cloud.consul.discovery.hostname*
