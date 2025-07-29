@@ -1,5 +1,6 @@
 package com.example.blog_application.post
 
+import com.example.blog_application.comment.Comment
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
 import java.time.LocalDateTime
@@ -11,8 +12,8 @@ data class Post(
 
     val title: String,
     val content: String,
-    val likes: Int = 0,
-    val comments: Int = 0,
+    val likedBy: MutableSet<String> = mutableSetOf(),
+    val comments: MutableList<Comment> = mutableListOf(),
 
     // Link to the User entity
     val authorId: String,
