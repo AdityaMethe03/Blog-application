@@ -45,13 +45,13 @@ class UserController(
         return ResponseEntity.ok(AuthResponseDto(token))
     }
 
-    @PostMapping("/users/createuser")
+    @PostMapping("/user/createuser")
     @PreAuthorize("hasAuthority('ADMIN')")
     fun createUser(@RequestBody userRequestDto: UserRequestDto): UserResponseDto {
         return userService.registerUser(userRequestDto)
     }
 
-    @GetMapping("/users/{id}")
+    @GetMapping("/user/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
     fun getUserById(@PathVariable id: String): ResponseEntity<Any> {
         val userDto = userService.findUserById(id)
@@ -61,13 +61,13 @@ class UserController(
             ResponseEntity.notFound().build()
         }
     }
-    @GetMapping("/users/all")
+    @GetMapping("/user/all")
     @PreAuthorize("hasAuthority('ADMIN')")
     fun getAll(): List<Any> {
         return userService.findAllUsers()
     }
 
-    @PutMapping("/users/{id}")
+    @PutMapping("/user/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
     fun updateUser(
         @PathVariable id: String,
