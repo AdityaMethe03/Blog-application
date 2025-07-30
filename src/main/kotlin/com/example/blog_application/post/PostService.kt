@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Query
 import org.springframework.data.mongodb.core.query.Update
+import java.time.LocalDateTime
 
 @Service
 class PostService(
@@ -17,6 +18,14 @@ class PostService(
     private val userRepository: UserRepository,
     private val mongoTemplate: MongoTemplate
 ) {
+
+    fun getLoggedInUserId(): String {
+        val authentication = SecurityContextHolder.getContext().authentication
+        val userEmail = authentication.name
+        val userId = userRepository.findByEmail(userEmail).get().id ?: throw IllegalArgumentException("User ID cannot be null")
+
+        return userId
+    }
 
     fun createPost(postRequestDto: PostRequestDto): PostResponseDto {
         // Get the email of the currently logged-in user
@@ -47,11 +56,6 @@ class PostService(
         )
     }
 
-    fun getUserIdFromEmail(email: String): String {
-        val user = userRepository.findByEmail(email)
-            .orElseThrow { UsernameNotFoundException("User not found with email: $email") }
-        return user.id!!
-    }
 
     fun toggleLike(postId: String, userId: String): PostResponseDto {
         val post = postRepository.findById(postId)
@@ -67,13 +71,17 @@ class PostService(
             update.addToSet("likedBy", userId)
         }
 
-        val updatedPost = mongoTemplate.findAndModify(query, update, Post::class.java)
+        mongoTemplate.findAndModify(query, update, Post::class.java)
             ?: throw Exception("Could not update post")
+
+        val updatedPost = postRepository.findById(postId)
+            .orElseThrow { Exception("Post not found after update, this indicates a serious data inconsistency.") }
 
         return PostResponseDto(
             id = updatedPost.id!!,
             title = updatedPost.title,
             content = updatedPost.content,
+            likedBy = updatedPost.likedBy,
             likesCount = updatedPost.likedBy.size,
             commentsCount = updatedPost.comments.size,
             authorId = updatedPost.authorId,
