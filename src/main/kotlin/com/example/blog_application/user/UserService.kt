@@ -20,6 +20,11 @@ class UserService(private val userRepository: UserRepository, private val passwo
         return userId
     }
 
+    fun userAlreadyExits(email: String): Boolean {
+        val userOptional = userRepository.findByEmail(email)
+        return !userOptional.isEmpty()
+    }
+
     fun findUserById(id: String): UserResponseDto? {
         val user = userRepository.findById(id).orElse(null) ?: return null
 

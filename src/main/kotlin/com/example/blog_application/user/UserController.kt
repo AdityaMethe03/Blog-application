@@ -27,6 +27,11 @@ class UserController(
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
     fun registerUser(@RequestBody userRequestDto: UserRequestDto): UserResponseDto {
+
+        if (userService.userAlreadyExits(userRequestDto.email)) {
+            throw Exception("User with email ${userRequestDto.email} already exists")
+        }
+
         return userService.registerUser(userRequestDto)
     }
 
@@ -48,6 +53,11 @@ class UserController(
     @PostMapping("/user/createuser")
     @PreAuthorize("hasAuthority('ADMIN')")
     fun createUser(@RequestBody userRequestDto: UserRequestDto): UserResponseDto {
+
+        if (userService.userAlreadyExits(userRequestDto.email)) {
+            throw Exception("User with email ${userRequestDto.email} already exists")
+        }
+
         return userService.registerUser(userRequestDto)
     }
 
