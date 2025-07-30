@@ -53,7 +53,7 @@ class UserController(
 
     @GetMapping("/user/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    fun getUserById(@PathVariable id: String): ResponseEntity<Any> {
+    fun getUserById(@PathVariable id: String): ResponseEntity<UserResponseDto> {
         val userDto = userService.findUserById(id)
         return if (userDto != null) {
             ResponseEntity.ok(userDto)

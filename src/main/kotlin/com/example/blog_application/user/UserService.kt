@@ -61,8 +61,8 @@ class UserService(private val userRepository: UserRepository, private val passwo
         return UserResponseDto(
             id = savedUser.id!!, // The ID is guaranteed to be non-null after saving
             email = savedUser.email,
-            firstName = savedUser.firstName!!,
-            lastName = savedUser.lastName!!,
+            firstName = savedUser.firstName,
+            lastName = savedUser.lastName,
             roles = savedUser.roles
         )
     }

@@ -11,25 +11,18 @@ import java.time.LocalDateTime
 data class User(
     @Id
     val id: String? = null,
-
-    // --- Core Information (Required) ---
     val email: String,
-    val password: String, // This should always be the HASHED password
+    val password: String,
     val roles: List<UserRoleEnum>,
 
-    // --- User Profile (Optional) ---
     val title: String? = null,
     val firstName: String? = null,
     val lastName: String? = null,
     val gender: String? = null,
     val dateOfBirth: LocalDate? = null,
     val occupation: String? = null,
-
-    // --- Security & Status (with defaults) ---
     val status: UserStatusEnum = UserStatusEnum.ACTIVE,
     val passwordUpdated: Boolean = false,
-
-    // --- Counters & Timestamps (with defaults) ---
     val numberOfPosts: Int = 0,
     val numberOfComments: Int = 0,
     val creationDate: LocalDateTime = LocalDateTime.now(),

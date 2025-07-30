@@ -9,16 +9,12 @@ import java.time.LocalDateTime
 data class Post(
     @Id
     val id: String? = null,
-
     val title: String,
     val content: String,
     val likedBy: MutableSet<String> = mutableSetOf(),
     val comments: MutableList<Comment> = mutableListOf(),
-
-    // Link to the User entity
     val authorId: String,
     val authorName: String,
-
     val createdAt: LocalDateTime = LocalDateTime.now(),
     var updatedAt: LocalDateTime = LocalDateTime.now(),
 )
