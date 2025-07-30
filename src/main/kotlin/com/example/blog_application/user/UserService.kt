@@ -4,6 +4,7 @@ import com.example.blog_application.user.dto.UserRequestDto
 import com.example.blog_application.user.dto.UserResponseDto
 import com.example.blog_application.user.dto.UserUpdateDto
 import com.example.blog_application.user.enums.UserRoleEnum
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
@@ -11,10 +12,17 @@ import org.springframework.stereotype.Service
 @Service
 class UserService(private val userRepository: UserRepository, private val passwordEncoder: PasswordEncoder) {
 
+    fun getLoggedInUserId(): String {
+        val authentication = SecurityContextHolder.getContext().authentication
+        val userEmail = authentication.name
+        val userId = userRepository.findByEmail(userEmail).get().id ?: throw IllegalArgumentException("User ID cannot be null")
+
+        return userId
+    }
+
     fun findUserById(id: String): UserResponseDto? {
         val user = userRepository.findById(id).orElse(null) ?: return null
 
-        // Convert the found User entity to a UserResponseDto
         return UserResponseDto(
             id = user.id!!,
             email = user.email,

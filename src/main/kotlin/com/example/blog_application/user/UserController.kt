@@ -21,7 +21,7 @@ class UserController(
     private val userService: UserService,
     private val authenticationManager: AuthenticationManager,
     private val jwtService: JwtService,
-    private val userDetailsService: UserDetailsService
+    private val userDetailsService: UserDetailsService,
 ) {
 
     @PostMapping("/register")
@@ -61,9 +61,23 @@ class UserController(
             ResponseEntity.notFound().build()
         }
     }
+
+    @GetMapping("/user/profile/me")
+    fun getMe(): ResponseEntity<Any> {
+
+        val userId = userService.getLoggedInUserId()
+
+        val userDto = userService.findUserById(userId)
+        return if (userDto != null) {
+            ResponseEntity.ok(userDto)
+        } else {
+            ResponseEntity.notFound().build()
+        }
+    }
+
     @GetMapping("/user/all")
     @PreAuthorize("hasAuthority('ADMIN')")
-    fun getAll(): List<Any> {
+    fun getAll(): List<UserResponseDto> {
         return userService.findAllUsers()
     }
 
@@ -74,6 +88,21 @@ class UserController(
         @RequestBody userUpdateDto: UserUpdateDto
     ): ResponseEntity<UserResponseDto> {
         val updatedUserDto = userService.updateUser(id, userUpdateDto)
+        return if (updatedUserDto != null) {
+            ResponseEntity.ok(updatedUserDto)
+        } else {
+            ResponseEntity.notFound().build()
+        }
+    }
+
+    @PutMapping("/user/updateprofile/me")
+    fun updateMe(
+        @RequestBody userUpdateDto: UserUpdateDto
+    ): ResponseEntity<UserResponseDto> {
+
+        val userId = userService.getLoggedInUserId()
+
+        val updatedUserDto = userService.updateUser(userId, userUpdateDto)
         return if (updatedUserDto != null) {
             ResponseEntity.ok(updatedUserDto)
         } else {
