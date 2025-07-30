@@ -8,9 +8,29 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
+import kotlin.String
 
 @Service
 class UserService(private val userRepository: UserRepository, private val passwordEncoder: PasswordEncoder) {
+
+    fun toUserResponseDto(user: User): UserResponseDto {
+        return UserResponseDto(
+            id= user.id!!,
+            title= user.email,
+            firstName= user.firstName,
+            lastName= user.lastName,
+            gender= user.gender,
+            email= user.email,
+            dateOfBirth= user.dateOfBirth,
+            roles= user.roles,
+            occupation= user.occupation,
+            numberOfPosts= user.numberOfPosts,
+            numberOfComments= user.numberOfComments,
+            status= user.status,
+            passwordUpdated= user.passwordUpdated,
+            creationDate= user.creationDate,
+        )
+    }
 
     fun getLoggedInUserId(): String {
         val authentication = SecurityContextHolder.getContext().authentication
@@ -22,54 +42,41 @@ class UserService(private val userRepository: UserRepository, private val passwo
 
     fun userAlreadyExits(email: String): Boolean {
         val userOptional = userRepository.findByEmail(email)
-        return !userOptional.isEmpty()
+        return !userOptional.isEmpty
     }
 
     fun findUserById(id: String): UserResponseDto? {
         val user = userRepository.findById(id).orElse(null) ?: return null
 
-        return UserResponseDto(
-            id = user.id!!,
-            email = user.email,
-            firstName = user.firstName,
-            lastName = user.lastName,
-            roles = user.roles
-        )
+        return toUserResponseDto(user)
     }
 
     fun findAllUsers(): List<UserResponseDto> {
         return userRepository.findAll().map { user ->
-            UserResponseDto(
-                id = user.id!!,
-                email = user.email,
-                firstName = user.firstName,
-                lastName = user.lastName,
-                roles = user.roles
-            )
+            toUserResponseDto(user)
         }
     }
 
     fun registerUser(userRequestDto: UserRequestDto): UserResponseDto {
         // 1. Convert DTO to User entity
         val user = User(
-            email = userRequestDto.email,
-            password = passwordEncoder.encode(userRequestDto.password), // Hash the password
+            title = userRequestDto.title,
             firstName = userRequestDto.firstName,
             lastName = userRequestDto.lastName,
-            roles = userRequestDto.roles ?: listOf(UserRoleEnum.USER)
+            gender = userRequestDto.gender,
+            email = userRequestDto.email,
+            password = passwordEncoder.encode(userRequestDto.password), // Hash the password
+            confirmPassword = passwordEncoder.encode(userRequestDto.confirmPassword),
+            dateOfBirth = userRequestDto.dateOfBirth,
+            occupation = userRequestDto.occupation,
+            roles = userRequestDto.roles
         )
 
         // 2. Save the User entity to the database
         val savedUser = userRepository.save(user)
 
         // 3. Convert the saved User entity to a response DTO
-        return UserResponseDto(
-            id = savedUser.id!!, // The ID is guaranteed to be non-null after saving
-            email = savedUser.email,
-            firstName = savedUser.firstName,
-            lastName = savedUser.lastName,
-            roles = savedUser.roles
-        )
+        return toUserResponseDto(savedUser)
     }
 
     fun updateUser(id: String, userUpdateDto: UserUpdateDto): UserResponseDto? {
@@ -86,14 +93,7 @@ class UserService(private val userRepository: UserRepository, private val passwo
 
         val savedUser = userRepository.save(updatedUser)
 
-        // Convert to response DTO
-        return UserResponseDto(
-            id = savedUser.id!!,
-            email = savedUser.email,
-            firstName = savedUser.firstName,
-            lastName = savedUser.lastName,
-            roles = savedUser.roles
-        )
+        return toUserResponseDto(savedUser)
     }
 
     fun deleteUser(id: String) {

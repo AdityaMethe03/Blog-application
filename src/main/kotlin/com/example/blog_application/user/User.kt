@@ -11,19 +11,20 @@ import java.time.LocalDateTime
 data class User(
     @Id
     val id: String? = null,
+    val title: String,
+    val firstName: String,
+    val lastName: String,
+    val gender: String,
     val email: String,
     val password: String,
+    val confirmPassword: String,
+    val dateOfBirth: LocalDate,
     val roles: List<UserRoleEnum>,
+    val occupation: String,
 
-    val title: String? = null,
-    val firstName: String? = null,
-    val lastName: String? = null,
-    val gender: String? = null,
-    val dateOfBirth: LocalDate? = null,
-    val occupation: String? = null,
-    val status: UserStatusEnum = UserStatusEnum.ACTIVE,
-    val passwordUpdated: Boolean = false,
     val numberOfPosts: Int = 0,
     val numberOfComments: Int = 0,
+    val status: UserStatusEnum = UserStatusEnum.ACTIVE,
+    val passwordUpdated: Boolean = false,
     val creationDate: LocalDateTime = LocalDateTime.now(),
 )
