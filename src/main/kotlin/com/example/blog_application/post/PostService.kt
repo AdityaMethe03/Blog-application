@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Query
 import org.springframework.data.mongodb.core.query.Update
-import java.time.LocalDateTime
 
 @Service
 class PostService(
@@ -18,6 +17,21 @@ class PostService(
     private val userRepository: UserRepository,
     private val mongoTemplate: MongoTemplate
 ) {
+
+    fun toPostResponseDto(post: Post): PostResponseDto {
+        return PostResponseDto(
+            id = post.id!!,
+            title = post.title,
+            content = post.content,
+            likedBy = post.likedBy,
+            likesCount = post.likedBy.size,
+            commentsCount = post.comments.size,
+            authorId = post.authorId,
+            authorName = post.authorName,
+            createdAt = post.createdAt,
+            updatedAt = post.updatedAt
+        )
+    }
 
     fun getLoggedInUserId(): String {
         val authentication = SecurityContextHolder.getContext().authentication
@@ -43,17 +57,7 @@ class PostService(
 
         val savedPost = postRepository.save(post)
 
-        return PostResponseDto(
-            id = savedPost.id!!,
-            title = savedPost.title,
-            content = savedPost.content,
-            likesCount = savedPost.likedBy.size,
-            commentsCount = savedPost.comments.size,
-            authorId = savedPost.authorId,
-            authorName = savedPost.authorName,
-            createdAt = savedPost.createdAt,
-            updatedAt = savedPost.updatedAt
-        )
+        return toPostResponseDto(savedPost)
     }
 
 
@@ -77,18 +81,13 @@ class PostService(
         val updatedPost = postRepository.findById(postId)
             .orElseThrow { Exception("Post not found after update, this indicates a serious data inconsistency.") }
 
-        return PostResponseDto(
-            id = updatedPost.id!!,
-            title = updatedPost.title,
-            content = updatedPost.content,
-            likedBy = updatedPost.likedBy,
-            likesCount = updatedPost.likedBy.size,
-            commentsCount = updatedPost.comments.size,
-            authorId = updatedPost.authorId,
-            authorName = updatedPost.authorName,
-            createdAt = updatedPost.createdAt,
-            updatedAt = updatedPost.updatedAt
-        )
+        return toPostResponseDto(updatedPost)
+    }
+
+    fun findAllPosts(): List<PostResponseDto> {
+        return postRepository.findAll().map { post ->
+            toPostResponseDto(post)
+        }
     }
 
 }

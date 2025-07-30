@@ -7,6 +7,7 @@ import com.example.blog_application.user.dto.AuthResponseDto
 import com.example.blog_application.user.dto.UserRequestDto
 import com.example.blog_application.user.dto.UserResponseDto
 import com.example.blog_application.user.dto.UserUpdateDto
+import com.example.blog_application.user.enums.UserStatusEnum
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
@@ -22,6 +23,7 @@ class UserController(
     private val authenticationManager: AuthenticationManager,
     private val jwtService: JwtService,
     private val userDetailsService: UserDetailsService,
+    private val userRepository: UserRepository,
 ) {
 
     @PostMapping("/register")
@@ -37,17 +39,39 @@ class UserController(
 
     @PostMapping("/login")
     fun login(@RequestBody authRequest: AuthRequestDto): ResponseEntity<AuthResponseDto> {
-        // 1. Authenticate the user
+        // 1. Authenticate the user credentials
         authenticationManager.authenticate(
-            UsernamePasswordAuthenticationToken(authRequest.email, authRequest.password)
+            UsernamePasswordAuthenticationToken(
+                authRequest.email,
+                authRequest.password
+            )
         )
 
-        // 2. If authentication is successful, generate a token
+        // 2. Load the UserDetails (this typically comes from your UserDetailsService)
         val userDetails = userDetailsService.loadUserByUsername(authRequest.email)
-        val token = jwtService.generateToken(userDetails)
 
-        // 3. Return the token
-        return ResponseEntity.ok(AuthResponseDto(token))
+        // 3. Fetch the actual User entity from the database
+        // This is crucial to get the user's ID and other specific details
+        val user = userRepository.findByEmail(authRequest.email)
+            .orElseThrow { Exception("User not found after successful authentication. This is an internal error.") }
+
+        // Optional: Add a check for user status if needed
+        if (user.status != UserStatusEnum.ACTIVE) {
+            throw Exception("User account is not active.")
+        }
+
+        // 4. Generate JWT token
+        val jwtToken = jwtService.generateToken(userDetails)
+
+        // 5. Build and return AuthResponse including the user's ID
+        return ResponseEntity.ok(
+            AuthResponseDto(
+                id = user.id!!, // Assuming user.id is never null here after fetching
+                token = jwtToken,
+                email = user.email,
+                roles = user.roles
+            )
+        )
     }
 
     @PostMapping("/user/createuser")

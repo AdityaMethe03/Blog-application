@@ -23,4 +23,9 @@ class PostController(
 
         return postService.toggleLike(postId, userId)
     }
+
+    @GetMapping("/post/allposts")
+    fun getAllPosts(): List<PostResponseDto> {
+        return postService.findAllPosts()
+    }
 }
