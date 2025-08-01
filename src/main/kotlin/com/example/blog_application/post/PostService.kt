@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Query
 import org.springframework.data.mongodb.core.query.Update
+import java.util.Optional
 
 @Service
 class PostService(
@@ -88,6 +89,13 @@ class PostService(
         return postRepository.findAll().map { post ->
             toPostResponseDto(post)
         }
+    }
+
+    fun findPostById(postId: String): PostResponseDto {
+        val post = postRepository.findById(postId)
+            .orElseThrow { Exception("Post not found.") }
+
+        return toPostResponseDto(post)
     }
 
 }

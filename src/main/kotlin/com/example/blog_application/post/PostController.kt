@@ -28,4 +28,9 @@ class PostController(
     fun getAllPosts(): List<PostResponseDto> {
         return postService.findAllPosts()
     }
+
+    @GetMapping("/post/{postId}")
+    fun getPostById(@PathVariable postId: String): PostResponseDto {
+        return postService.findPostById(postId)
+    }
 }
