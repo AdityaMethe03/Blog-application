@@ -16,7 +16,7 @@ class UserService(private val userRepository: UserRepository, private val passwo
     fun toUserResponseDto(user: User): UserResponseDto {
         return UserResponseDto(
             id= user.id!!,
-            title= user.email,
+            title= user.title,
             firstName= user.firstName,
             lastName= user.lastName,
             gender= user.gender,
@@ -84,9 +84,9 @@ class UserService(private val userRepository: UserRepository, private val passwo
 
         // Create a new user object with the updated fields
         val updatedUser = existingUser.copy(
+            title = userUpdateDto.title ?: existingUser.title,
             firstName = userUpdateDto.firstName ?: existingUser.firstName,
             lastName = userUpdateDto.lastName ?: existingUser.lastName,
-            title = userUpdateDto.title ?: existingUser.title,
             gender = userUpdateDto.gender ?: existingUser.gender,
             occupation = userUpdateDto.occupation ?: existingUser.occupation
         )

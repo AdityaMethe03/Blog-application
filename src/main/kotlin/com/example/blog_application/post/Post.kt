@@ -9,8 +9,8 @@ import java.time.LocalDateTime
 data class Post(
     @Id
     val id: String? = null,
-    val title: String,
-    val content: String,
+    var title: String,
+    var content: String,
     val likedBy: MutableSet<String> = mutableSetOf(),
     val comments: MutableList<Comment> = mutableListOf(),
     val authorId: String,

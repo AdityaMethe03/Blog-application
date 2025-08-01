@@ -10,7 +10,8 @@ import org.springframework.stereotype.Service
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Query
 import org.springframework.data.mongodb.core.query.Update
-import java.util.Optional
+import org.springframework.security.access.AccessDeniedException
+import java.time.LocalDateTime
 
 @Service
 class PostService(
@@ -83,6 +84,26 @@ class PostService(
             .orElseThrow { Exception("Post not found after update, this indicates a serious data inconsistency.") }
 
         return toPostResponseDto(updatedPost)
+    }
+
+    fun updatePost(id: String, postRequestDto: PostRequestDto): PostResponseDto? {
+        val existingPost = postRepository.findById(id).orElse(null) ?: return null
+
+        val currentUserId = getLoggedInUserId()
+
+        if (existingPost.authorId != currentUserId) {
+            throw AccessDeniedException("You are not authorized to update this post")
+        }
+
+        val updatedPost = existingPost.copy(
+            title = postRequestDto.title,
+            content = postRequestDto.content,
+            updatedAt = LocalDateTime.now()
+        )
+
+        val savedPost = postRepository.save(updatedPost)
+
+        return toPostResponseDto(savedPost)
     }
 
     fun findAllPosts(): List<PostResponseDto> {

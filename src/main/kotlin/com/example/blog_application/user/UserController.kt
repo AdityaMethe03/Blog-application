@@ -97,7 +97,7 @@ class UserController(
     }
 
     @GetMapping("/user/profile/me")
-    fun getMe(): ResponseEntity<Any> {
+    fun getMe(): ResponseEntity<UserResponseDto> {
 
         val userId = userService.getLoggedInUserId()
 

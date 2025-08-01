@@ -3,6 +3,7 @@ package com.example.blog_application.post
 import com.example.blog_application.post.dto.PostRequestDto
 import com.example.blog_application.post.dto.PostResponseDto
 import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -22,6 +23,19 @@ class PostController(
         val userId = postService.getLoggedInUserId()
 
         return postService.toggleLike(postId, userId)
+    }
+
+    @PutMapping("/post/{id}")
+    fun updatePost(
+        @PathVariable id: String,
+        @RequestBody postRequestDto: PostRequestDto
+    ): ResponseEntity<PostResponseDto> {
+        val updatedPostDto = postService.updatePost(id, postRequestDto)
+        return if (updatedPostDto != null) {
+            ResponseEntity.ok(updatedPostDto)
+        } else {
+            ResponseEntity.notFound().build()
+        }
     }
 
     @GetMapping("/post/allposts")
