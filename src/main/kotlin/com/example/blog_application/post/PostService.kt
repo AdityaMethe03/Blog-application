@@ -62,7 +62,6 @@ class PostService(
         return toPostResponseDto(savedPost)
     }
 
-
     fun toggleLike(postId: String, userId: String): PostResponseDto {
         val post = postRepository.findById(postId)
             .orElseThrow { Exception("Post not found") }
@@ -87,7 +86,8 @@ class PostService(
     }
 
     fun updatePost(id: String, postRequestDto: PostRequestDto): PostResponseDto? {
-        val existingPost = postRepository.findById(id).orElse(null) ?: return null
+        val existingPost = postRepository.findById(id)
+            .orElseThrow { Exception("Post with id $id not found") }
 
         val currentUserId = getLoggedInUserId()
 
@@ -104,6 +104,19 @@ class PostService(
         val savedPost = postRepository.save(updatedPost)
 
         return toPostResponseDto(savedPost)
+    }
+
+    fun deletePost(id: String) {
+        val existingPost = postRepository.findById(id)
+            .orElseThrow { Exception("Post with id $id not found") }
+
+        val currentUserId = getLoggedInUserId()
+
+        if (existingPost.authorId != currentUserId) {
+            throw AccessDeniedException("You are not authorized to update this post")
+        }
+
+        postRepository.deleteById(id)
     }
 
     fun findAllPosts(): List<PostResponseDto> {

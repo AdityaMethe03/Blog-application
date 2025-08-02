@@ -38,6 +38,12 @@ class PostController(
         }
     }
 
+    @DeleteMapping("/post/{id}")
+    fun deletePost(@PathVariable id: String): ResponseEntity<Void> {
+        postService.deletePost(id)
+        return ResponseEntity.noContent().build()
+    }
+
     @GetMapping("/post/allposts")
     fun getAllPosts(): List<PostResponseDto> {
         return postService.findAllPosts()
