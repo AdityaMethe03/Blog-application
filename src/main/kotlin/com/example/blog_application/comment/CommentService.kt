@@ -1,0 +1,35 @@
+package com.example.blog_application.comment
+
+import com.example.blog_application.comment.dto.CommentResponseDto
+import com.example.blog_application.user.UserRepository
+import org.springframework.data.mongodb.core.MongoTemplate
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.stereotype.Service
+
+@Service
+class CommentService(
+    private val commentRepository: CommentRepository,
+    private val userRepository: UserRepository,
+    private val mongoTemplate: MongoTemplate
+) {
+
+    fun toCommentResponseDto(comment: Comment): CommentResponseDto {
+        return CommentResponseDto(
+            id = comment.id!!,
+            content = comment.content,
+            likes = comment.likes,
+            postId = comment.postId,
+            authorId = comment.authorId,
+            authorName = comment.authorName,
+            createdAt = comment.createdAt,
+        )
+    }
+
+    fun getLoggedInUserId(): String {
+        val authentication = SecurityContextHolder.getContext().authentication
+        val userEmail = authentication.name
+        val userId = userRepository.findByEmail(userEmail).get().id ?: throw IllegalArgumentException("User ID cannot be null")
+
+        return userId
+    }
+}

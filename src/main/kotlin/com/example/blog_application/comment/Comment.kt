@@ -8,16 +8,10 @@ import java.time.LocalDateTime
 class Comment (
     @Id
     val id: String? = null,
-
     val content: String,
     val likes: String = "",
-
-    //Link to the Post entity
     val postId: String,
-
-    // Link to the User entity
     val authorId: String,
     val authorName: String,
-
     val createdAt: LocalDateTime = LocalDateTime.now()
 )
