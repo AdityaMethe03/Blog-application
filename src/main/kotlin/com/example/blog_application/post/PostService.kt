@@ -44,12 +44,11 @@ class PostService(
     }
 
     fun createPost(postRequestDto: PostRequestDto): PostResponseDto {
-        // Get the email of the currently logged-in user
+
         val userEmail = SecurityContextHolder.getContext().authentication.name
         val author = userRepository.findByEmail(userEmail)
             .orElseThrow { UsernameNotFoundException("Author not found") }
 
-        // Convert DTO to Post entity
         val post = Post(
             title = postRequestDto.title,
             content = postRequestDto.content,
