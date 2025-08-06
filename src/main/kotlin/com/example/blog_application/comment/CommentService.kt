@@ -3,7 +3,6 @@ package com.example.blog_application.comment
 import com.example.blog_application.comment.dto.CommentRequestDto
 import com.example.blog_application.comment.dto.CommentResponseDto
 import com.example.blog_application.user.UserRepository
-import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Service
@@ -11,8 +10,7 @@ import org.springframework.stereotype.Service
 @Service
 class CommentService(
     private val commentRepository: CommentRepository,
-    private val userRepository: UserRepository,
-    private val mongoTemplate: MongoTemplate
+    private val userRepository: UserRepository
 ) {
 
     fun toCommentResponseDto(comment: Comment): CommentResponseDto {
@@ -51,5 +49,9 @@ class CommentService(
         val savedComment = commentRepository.save(comment)
 
         return toCommentResponseDto(savedComment)
+    }
+
+    fun findAllCommentsByPostId(postId: String): List<CommentResponseDto> {
+        return commentRepository.findByPostId(postId).map { toCommentResponseDto(it) }
     }
 }

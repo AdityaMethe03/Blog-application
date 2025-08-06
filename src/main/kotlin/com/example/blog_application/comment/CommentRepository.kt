@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository
 @Repository
 interface CommentRepository : MongoRepository<Comment, String> {
 
+    fun findByPostId(postId: String): List<Comment>
 }

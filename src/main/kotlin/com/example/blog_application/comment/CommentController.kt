@@ -17,4 +17,9 @@ class CommentController(
         return commentService.createComment(commentRequestDto)
     }
 
+    @GetMapping("/comment/search/all/{postId}")
+    fun searchAllCommentsByPostId(@PathVariable postId: String): List<CommentResponseDto> {
+        return commentService.findAllCommentsByPostId(postId)
+    }
+
 }
