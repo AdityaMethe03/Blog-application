@@ -9,6 +9,7 @@ data class PostResponseDto (
     val likedBy: MutableSet<String> = mutableSetOf(),
     val likesCount: Int,
     val commentsCount: Int,
+    val commentInfo: List<CommentsInfoDto> = listOf(),
     val authorId: String,
     val authorName: String,
     val createdAt: LocalDateTime,
